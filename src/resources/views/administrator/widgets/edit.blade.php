@@ -9,7 +9,7 @@
 @stop
 
 @section('content')
-    {!! form()->model($widget, ['url' => route('administrator.widgets.update', $widget->id), 'method' => 'put']) !!}
+    {!! form()->model($widget, ['url' => route('administrator.widgets.update', $widget->id), 'method' => 'put', 'id' => 'widget-form']) !!}
     @include('administrator.widgets.partials.form')
     {!! form()->close() !!}
 @stop

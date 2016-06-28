@@ -14,7 +14,7 @@
 @stop
 
 @section('content')
-    {!! form()->model($widget, ['url' => route('administrator.widgets.store')]) !!}
+    {!! form()->model($widget, ['url' => route('administrator.widgets.store'), 'id' => 'widget-form']) !!}
     @include('administrator.widgets.partials.form')
     {!! form()->close() !!}
 @stop

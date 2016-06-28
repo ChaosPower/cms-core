@@ -18,27 +18,36 @@
 
     <div class="row">
         <div class="col-md-12">
-            <ul class="list-group">
-                @forelse (\Yajra\CMS\Entities\Menu::root()->descendants()->get() as $menu)
-                    <li class="list-group-item">
-                        <input type="checkbox" id="{{$menu->id}}" value="{{$menu->id}}"
-                               name="menu[]"
-                               class="md-check" {!! in_array($menu->id, $widget->menus()->select('menus.id')->lists('id')->all()) ? 'checked' : '' !!}>
-                        <label for="{{$menu->id}}">
-                            {{$menu->present()->indentedTitle()}}
-                            <small>(Alias: {{ $menu->present()->url() }})</small>
-                        </label>
-                    </li>
-                @empty
-                    <li class="list-group-item">
-                        <p class="text-danger">{{trans('cms::widget.menu.empty')}}</p>
-                        <p>
-                            <span class="label label-info">Heads Up!</span>
-                            {!! trans('cms::widget.menu.empty_content', ['link' => '<a href="'. route('administrator.navigation.index') .'">'.trans('cms::navigation.index.title').'</a>']) !!}
-                        </p>
-                    </li>
-                @endforelse
-            </ul>
+            <div id="jstree_div">
+                <ul class="list-group">
+                    @forelse(\Yajra\CMS\Entities\Navigation::all() as $nav)
+                            <li>
+                                {{$nav->title}}
+                                <ul>
+                                    @forelse ($nav->menus()->get()->toHierarchy() as $menu)
+                                        @include('administrator.widgets.partials.menu-item', ['menu' => $menu])
+                                    @empty
+                                        <li class="jstree-checked" data-id="{{$menu->id}}">
+                                            <p class="text-danger">{{trans('cms::widget.menu.empty')}}</p>
+                                            <p>
+                                                <span class="label label-info">Heads Up!</span>
+                                                {!! trans('cms::widget.menu.empty_content', ['link' => '<a href="'. route('administrator.navigation.index') .'">'.trans('cms::navigation.index.title').'</a>']) !!}
+                                            </p>
+                                        </li>
+                                    @endforelse
+                                </ul>
+                            </li>
+                    @empty
+                        <li class="list-group-item">
+                            <p class="text-danger">{{trans('cms::widget.menu.empty')}}</p>
+                            <p>
+                                <span class="label label-info">Heads Up!</span>
+                                {!! trans('cms::widget.menu.empty_content', ['link' => '<a href="'. route('administrator.navigation.index') .'">'.trans('cms::navigation.index.title').'</a>']) !!}
+                            </p>
+                        </li>
+                    @endforelse
+                </ul>
+            </div>
         </div>
     </div>
 </div>

@@ -64,16 +64,21 @@
     </div>
 </div>
 
+
 @push('js-plugins')
+@js('jstree')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css"/>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.5.9/ckeditor.js"></script>
 @endpush
 
 @push('scripts')
 <script>
+    var widget = {!! $widget->toJson() !!};
     new Vue({
         el: '#widget-form',
         data: {
-            widget: {!! $widget->toJson() !!},
+            tree: {},
+            widget: widget,
             types: [],
             templates: []
         },
@@ -103,6 +108,39 @@
         },
         ready: function () {
             this.fetchDependencies();
+
+            this.tree = $('#jstree_div').jstree({
+                "checkbox": {
+                    "tie_selection": true,
+                    "whole_node": false
+                },
+                "plugins": ["types", "checkbox","search"],
+                "types": {
+                    "folder": {
+                        "icon": "fa fa-link"
+                    },
+                    "link": {
+                        "icon": "fa fa-link"
+                    }
+                }
+            });
+            this.tree.on('ready.jstree', function () {
+                $("#jstree_div").jstree("open_all");
+            });
+
+            $('#widget-form').on('submit', function(e) {
+                e.preventDefault();
+
+                var selectedNode= this.tree.jstree(true).get_selected(true);
+                var ids = [];
+                $.each(selectedNode, function(i, node){
+                //     ids.push($(this).data('id'));
+                    if (node.data.id) {
+                        ids.push(node.data.id)
+                    }
+                });
+                console.log(ids);
+            }.bind(this));
 
             CKEDITOR.replace('body', {
                 allowedContent: true,
